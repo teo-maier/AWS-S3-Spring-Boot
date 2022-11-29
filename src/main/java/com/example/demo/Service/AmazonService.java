@@ -54,4 +54,30 @@ public class AmazonService {
     public List<Bucket> listBuckets() {
         return amazonS3.listBuckets();
     }
+
+    public Bucket createBucket(String bucket_name) {
+        if (amazonS3.doesBucketExistV2(bucket_name)) {
+            throw new AmazonServiceException("Bucket already exists");
+        } else {
+            try {
+                return amazonS3.createBucket(bucket_name);
+            } catch (AmazonS3Exception e) {
+                throw new AmazonServiceException("Could not create bucket with this name");
+            }
+        }
+    }
+
+    public void removeUnversionedObjects(String bucketName) {
+        ListObjectsV2Result objects = listObjects(bucketName);
+        List<S3ObjectSummary> objectSummaryList = objects.getObjectSummaries();
+
+        if (objectSummaryList.isEmpty()) {
+            amazonS3.deleteBucket(bucketName);
+        } else {
+            for (S3ObjectSummary o : objectSummaryList) {
+                amazonS3.deleteObject(bucketName, o.getKey());
+                amazonS3.deleteBucket(bucketName);
+            }
+        }
+    }
 }

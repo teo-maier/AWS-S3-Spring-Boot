@@ -1,5 +1,7 @@
 package com.example.demo.Controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -77,6 +79,16 @@ public class DashboardController {
         return ResponseEntity.ok(s3ObjectList.stream().map(S3Object::getKey).collect(Collectors.toList()));
     }
 
+    @PostMapping("/new")
+    @ResponseBody
+    public ResponseEntity<?> createBucket(@RequestParam String bucketName) {
+        try {
+            return ResponseEntity.ok(amazonService.createBucket(bucketName));
+        } catch (AmazonServiceException e) {
+            return ResponseEntity.ok(e.getErrorMessage());
+        }
+    }
+
     @GetMapping("/buckets/s3")
     @ResponseBody
     public ResponseEntity<?> getBucketsFromS3() {
@@ -88,5 +100,16 @@ public class DashboardController {
     public ResponseEntity<?> getObjectsFromS3(@PathVariable String bucketName) {
         ListObjectsV2Result objectsV2Result = amazonService.listObjects(bucketName);
         return ResponseEntity.ok(objectsV2Result.getObjectSummaries().stream().map(S3ObjectSummary::getKey).collect(Collectors.toList()));
+    }
+
+    @DeleteMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteBucket(@RequestParam String bucketName) {
+        try {
+            amazonService.removeUnversionedObjects(bucketName);
+            return ResponseEntity.ok("Successful delete");
+        } catch (AmazonServiceException e) {
+            return ResponseEntity.ok(e.getErrorMessage());
+        }
     }
 }
