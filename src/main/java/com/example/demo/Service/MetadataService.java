@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -54,9 +55,16 @@ public class MetadataService {
 
     }
 
-    public S3Object download(int id) {
+    public S3Object getFileById(int id) {
         FileMeta fileMeta = fileMetaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return amazonService.download(fileMeta.getFilePath(), fileMeta.getFileName());
+        return amazonService.getS3Object(fileMeta.getFilePath(), fileMeta.getFileName());
+    }
+
+    public List<S3Object> getAllFiles() {
+        List<FileMeta> fileMetaList = fileMetaRepository.findAll();
+        return fileMetaList.stream()
+                .map(fileMeta -> amazonService.getS3Object(fileMeta.getFilePath(), fileMeta.getFileName()))
+                .collect(Collectors.toList());
     }
 
     private static void createZipEntry(ZipOutputStream zipOutputStream, S3Object fileName) throws IOException {
