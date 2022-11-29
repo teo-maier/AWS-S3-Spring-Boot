@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FileMetaRepository extends JpaRepository<FileMeta, Integer> {
+    FileMeta findFileMetaByFileName(String fileName);
 }

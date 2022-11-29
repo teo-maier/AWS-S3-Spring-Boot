@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.example.demo.Model.FileMeta;
@@ -62,9 +63,22 @@ public class MetadataService {
 
     public List<S3Object> getAllFiles() {
         List<FileMeta> fileMetaList = fileMetaRepository.findAll();
+        if (fileMetaList.isEmpty()) {
+            throw new AmazonServiceException("Empty table");
+        }
         return fileMetaList.stream()
                 .map(fileMeta -> amazonService.getS3Object(fileMeta.getFilePath(), fileMeta.getFileName()))
                 .collect(Collectors.toList());
+    }
+
+    public void deleteAllFiles(String objectName) throws AmazonServiceException {
+        // get fileName
+        String s1 = objectName.substring(objectName.indexOf("/") + 1).trim();
+        FileMeta fileMeta = fileMetaRepository.findFileMetaByFileName(s1);
+        if(Objects.isNull(fileMeta)) {
+            throw new AmazonServiceException("File does not exist in DB");
+        }
+        fileMetaRepository.delete(fileMeta);
     }
 
     private static void createZipEntry(ZipOutputStream zipOutputStream, S3Object fileName) throws IOException {

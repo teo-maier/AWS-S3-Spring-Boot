@@ -39,10 +39,10 @@ public class DashboardController {
     }
 
     @PostMapping("/upload")
-    public String upload(
-            @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> upload(
+            @RequestPart("file") MultipartFile file) throws IOException {
         metadataService.upload(file);
-        return "redirect:/dashboard";
+        return ResponseEntity.ok("File uploaded!");
     }
 
     @GetMapping("/downloadZip/{id}")
@@ -75,8 +75,12 @@ public class DashboardController {
     @GetMapping("/objects/db")
     @ResponseBody
     public ResponseEntity<?> getObjectsFromDB() {
-        List<S3Object> s3ObjectList = metadataService.getAllFiles();
-        return ResponseEntity.ok(s3ObjectList.stream().map(S3Object::getKey).collect(Collectors.toList()));
+        try {
+            List<S3Object> s3ObjectList = metadataService.getAllFiles();
+            return ResponseEntity.ok(s3ObjectList.stream().map(S3Object::getKey).collect(Collectors.toList()));
+        } catch (AmazonServiceException e) {
+            return ResponseEntity.ok(e.getErrorMessage());
+        }
     }
 
     @PostMapping("/new")
@@ -102,12 +106,24 @@ public class DashboardController {
         return ResponseEntity.ok(objectsV2Result.getObjectSummaries().stream().map(S3ObjectSummary::getKey).collect(Collectors.toList()));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/bucket/delete")
     @ResponseBody
     public ResponseEntity<?> deleteBucket(@RequestParam String bucketName) {
         try {
             amazonService.removeUnversionedObjects(bucketName);
             return ResponseEntity.ok("Successful delete");
+        } catch (AmazonServiceException e) {
+            return ResponseEntity.ok(e.getErrorMessage());
+        }
+    }
+
+    @DeleteMapping("/object/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteObject(@RequestParam String bucketName, @RequestParam String objectName) {
+        try {
+            amazonService.deleteObject(bucketName, objectName);
+            metadataService.deleteAllFiles(objectName);
+            return ResponseEntity.ok("Successful delete object");
         } catch (AmazonServiceException e) {
             return ResponseEntity.ok(e.getErrorMessage());
         }

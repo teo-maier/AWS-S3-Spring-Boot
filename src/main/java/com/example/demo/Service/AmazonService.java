@@ -80,4 +80,10 @@ public class AmazonService {
             }
         }
     }
+
+    public void deleteObject(String bucketName, String objectName) {
+        S3ObjectSummary objectSummary = new S3ObjectSummary();
+        objectSummary.setKey(objectName);
+        amazonS3.deleteObject(bucketName, objectSummary.getKey());
+    }
 }
