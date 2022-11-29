@@ -38,7 +38,7 @@ public class DashboardController {
 
     @GetMapping("/downloadZip/{id}")
     @ResponseBody
-    public ResponseEntity<?> downloadZip(Model model, @PathVariable int id, HttpServletResponse response) throws
+    public ResponseEntity<?> downloadZip(@PathVariable int id, HttpServletResponse response) throws
             IOException {
 
         S3Object s3Object = metadataService.download(id);
@@ -48,7 +48,7 @@ public class DashboardController {
 
     @GetMapping("/download/{id}")
     @ResponseBody
-    public HttpEntity<byte[]> download(Model model, @PathVariable int id, HttpServletResponse response) throws
+    public HttpEntity<byte[]> download(@PathVariable int id) throws
             IOException {
         S3Object s3Object = metadataService.download(id);
         // display the file in browser
