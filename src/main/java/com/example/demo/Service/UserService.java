@@ -18,11 +18,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findByName(String name) {
-        return userRepository.findByName(name);
+    public User findByAddress(String address) {
+        return userRepository.findByAddress(address);
     }
 
-    public String getUserName(User user) {
-        return user.getName();
+    public String getUserAddress(User user) {
+        return user.getAddress();
     }
 }
