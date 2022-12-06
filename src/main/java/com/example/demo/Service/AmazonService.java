@@ -72,6 +72,7 @@ public class AmazonService {
         List<S3ObjectSummary> objectSummaryList = objects.getObjectSummaries();
         System.out.println("test");
         System.out.println("test");
+        System.out.println("test");
         if (objectSummaryList.isEmpty()) {
             amazonS3.deleteBucket(bucketName);
         } else {
