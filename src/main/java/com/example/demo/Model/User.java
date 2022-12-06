@@ -16,7 +16,7 @@ import lombok.Setter;
 @Table(name = "user")
 public class User {
     private Long id;
-    private String name;
+    private String address;
 
     public void setId(Long id) {
         this.id = id;
