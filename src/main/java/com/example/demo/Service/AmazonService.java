@@ -70,9 +70,6 @@ public class AmazonService {
     public void removeUnversionedObjects(String bucketName) {
         ListObjectsV2Result objects = listObjects(bucketName);
         List<S3ObjectSummary> objectSummaryList = objects.getObjectSummaries();
-        System.out.println("test");
-        System.out.println("test");
-        System.out.println("test");
         if (objectSummaryList.isEmpty()) {
             amazonS3.deleteBucket(bucketName);
         } else {
