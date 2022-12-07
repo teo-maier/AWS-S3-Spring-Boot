@@ -22,4 +22,11 @@ public class UserController {
         System.out.println("hei");
         return ResponseEntity.ok(employeeDTOList);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllBy() {
+        List<User> employeeDTOList = userService.getAllUsers();
+        System.out.println("hei");
+        return ResponseEntity.ok(employeeDTOList);
+    }
 }
