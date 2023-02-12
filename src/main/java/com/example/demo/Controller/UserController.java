@@ -26,6 +26,7 @@ public class UserController {
     public ResponseEntity<?> getAllBy() {
         List<User> employeeDTOList = userService.getAllUsers();
         System.out.println("hei");
+        System.out.println("demo-9-test");
         return ResponseEntity.ok(employeeDTOList);
     }
 }
