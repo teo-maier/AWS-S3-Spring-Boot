@@ -25,6 +25,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllBy() {
         List<User> employeeDTOList = userService.getAllUsers();
+        System.out.println("1");
         return ResponseEntity.ok(employeeDTOList);
     }
 }
