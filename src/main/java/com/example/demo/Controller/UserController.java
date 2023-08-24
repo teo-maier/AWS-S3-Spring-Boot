@@ -19,6 +19,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         System.out.println("First commit");
+        System.out.println("Release 1");
         List<User> employeeDTOList = userService.getAllUsers();
         return ResponseEntity.ok(employeeDTOList);
     }
